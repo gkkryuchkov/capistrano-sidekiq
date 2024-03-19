@@ -85,6 +85,7 @@ namespace :sidekiq do
 
   def create_systemd_template(role)
     systemd_path = fetch(:service_unit_path, fetch_systemd_unit_path)
+    puts systemd_path
     backend.execute :mkdir, '-p', systemd_path if fetch(:systemctl_user)
 
     config_files(role).each do |config_file|
