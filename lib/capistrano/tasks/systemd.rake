@@ -94,7 +94,7 @@ namespace :sidekiq do
         backend.upload!(StringIO.new(ctemplate), temp_file_name)
         if fetch(:systemctl_user)
           warn "Moving #{temp_file_name} to #{systemd_file_name}"
-          backend.execute :mv, temp_file_name, systemd_file_name
+          backend.sudo_if_needed :mv, temp_file_name, systemd_file_name
         else
           warn "Installing #{systemd_file_name} as root"
           backend.execute :sudo, :mv, temp_file_name, systemd_file_name
