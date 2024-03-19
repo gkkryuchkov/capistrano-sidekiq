@@ -33,7 +33,7 @@ module Capistrano
 
     def sudo_if_needed(*command)
       if fetch(:service_unit_user) == :system
-        backend.sudo command.map(&:to_s).join(" ")
+        backend.execute "sudo " + command.map(&:to_s).join(" ")
       else
         backend.execute(*command)
       end

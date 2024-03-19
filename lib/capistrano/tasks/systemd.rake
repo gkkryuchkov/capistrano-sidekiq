@@ -35,7 +35,7 @@ namespace :sidekiq do
   desc 'Install Sidekiq systemd service'
   task :install do
     on roles fetch(:sidekiq_roles) do |role|
-      warn role
+
       git_plugin.switch_user(role) do
         git_plugin.create_systemd_template(role)
       end
@@ -86,8 +86,7 @@ namespace :sidekiq do
 
   def create_systemd_template(role)
     systemd_path = fetch(:service_unit_path, fetch_systemd_unit_path)
-    warn systemd_path
-    backend.execute :mkdir, '-p', systemd_path if fetch(:systemctl_user)
+    # backend.execute :mkdir, '-p', systemd_path if fetch(:systemctl_user)
 
     config_files(role).each do |config_file|
         ctemplate = compiled_template(config_file)
@@ -96,7 +95,7 @@ namespace :sidekiq do
         backend.upload!(StringIO.new(ctemplate), temp_file_name)
         if fetch(:systemctl_user)
           warn "Moving #{temp_file_name} to #{systemd_file_name}"
-          backend.execute :mv, temp_file_name, systemd_file_name
+          sudo_if_needed "/usr/bin/mv", temp_file_name, systemd_file_name
         else
           warn "Installing #{systemd_file_name} as root"
           backend.execute :sudo, :mv, temp_file_name, systemd_file_name

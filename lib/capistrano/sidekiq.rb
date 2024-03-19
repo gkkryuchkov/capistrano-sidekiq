@@ -29,6 +29,8 @@ module Capistrano
     end
 
     def switch_user(role, &block)
+      warn role.inspect
+
       su_user = sidekiq_user(role)
       if su_user == role.user
         yield
